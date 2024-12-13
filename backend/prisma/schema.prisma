@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Requirement {
+  id          String     @id @default(uuid())
+  name        String
+  description String
+  documents   Document[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Document {
+  id               String            @id @default(uuid())
+  requirement      Requirement       @relation(fields: [requirementId], references: [id])
+  requirementId    String
+  name             String
+  documentVersions DocumentVersion[]
+  currentVersionId String?           @unique
+  currentVersion   DocumentVersion?  @relation("CurrentVersion", fields: [currentVersionId], references: [id])
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@unique([name, requirementId], name: "name_requirementId")
+}
+
+model DocumentVersion {
+  id             String          @id @default(uuid())
+  document       Document        @relation(fields: [documentId], references: [id])
+  documentId     String
+  versionNumber  Int
+  filePath       String
+  expirationDate DateTime
+  status         Status
+  validations    ValidationLog[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  currentOf      Document?       @relation("CurrentVersion")
+
+  @@unique([documentId, versionNumber])
+}
+
+model ValidationLog {
+  id                String          @id @default(uuid())
+  documentVersion   DocumentVersion @relation(fields: [documentVersionId], references: [id])
+  documentVersionId String
+  validatedBy       String
+  validationDate    DateTime        @default(now())
+  comments          String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @default(now())
+}
+
+enum Status {
+  Draft
+  Validated
+  Submitted
+}
