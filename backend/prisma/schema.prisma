@@ -18,16 +18,13 @@ model Requirement {
 
 model Document {
   id               String            @id @default(uuid())
-  requirement      Requirement       @relation(fields: [requirementId], references: [id])
-  requirementId    String
   name             String
   documentVersions DocumentVersion[]
   currentVersionId String?           @unique
   currentVersion   DocumentVersion?  @relation("CurrentVersion", fields: [currentVersionId], references: [id])
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
-
-  @@unique([name, requirementId], name: "name_requirementId")
+  Requirements     Requirement[]
 }
 
 model DocumentVersion {
@@ -38,23 +35,12 @@ model DocumentVersion {
   filePath       String
   expirationDate DateTime
   status         Status
-  validations    ValidationLog[]
+  isValidated    Boolean
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   currentOf      Document?       @relation("CurrentVersion")
 
   @@unique([documentId, versionNumber])
-}
-
-model ValidationLog {
-  id                String          @id @default(uuid())
-  documentVersion   DocumentVersion @relation(fields: [documentVersionId], references: [id])
-  documentVersionId String
-  validatedBy       String
-  validationDate    DateTime        @default(now())
-  comments          String?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @default(now())
 }
 
 enum Status {
