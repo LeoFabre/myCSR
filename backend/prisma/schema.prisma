@@ -28,17 +28,17 @@ model Document {
 }
 
 model DocumentVersion {
-  id             String          @id @default(uuid())
-  document       Document        @relation(fields: [documentId], references: [id])
+  id             String    @id @default(uuid())
+  document       Document  @relation(fields: [documentId], references: [id])
   documentId     String
   versionNumber  Int
   filePath       String
   expirationDate DateTime
   status         Status
   isValidated    Boolean
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  currentOf      Document?       @relation("CurrentVersion")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  currentOf      Document? @relation("CurrentVersion")
 
   @@unique([documentId, versionNumber])
 }
