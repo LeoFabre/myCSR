@@ -22,7 +22,7 @@ async function loadDocuments() {
 
 async function seedRequirements() {
     const requirements = [];
-    const documents = await loadDocuments(); // Charger les documents avec leurs handles
+    const documents = await loadDocuments();
 
     return new Promise((resolve, reject) => {
         fs.createReadStream("./Requirements.csv")
