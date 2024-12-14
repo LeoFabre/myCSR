@@ -10,10 +10,6 @@ To create the database schema :
 ```npx prisma generate```  
 ```npx prisma migrate dev --name init```  
 
-To seed the database with the data from the csv files :
-``cd /path/to/this/repo/backend``  
-``node ./prisma/seed.js``  
-
 # Running outside of docker
 First, uncomment line 8 in .env, and comment line 10 (to use the local database instead of the dockerized one).  
 To start the backend server :
