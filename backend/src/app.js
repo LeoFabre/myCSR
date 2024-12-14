@@ -2,6 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const requirementsRoutes = require('./routes/requirements');
 const documentsRoutes = require('./routes/documents');
+const { seedDB } = require("../prisma/seed");
+
+//seed the database
+seedDB();
 
 const app = express();
 

@@ -104,7 +104,7 @@ async function seedDocuments() {
     });
 }
 
-async function main() {
+async function seedDB() {
     try {
         console.log("Seeding requirements...");
         await seedRequirements();
@@ -120,4 +120,4 @@ async function main() {
     }
 }
 
-main();
+module.exports = { seedDB };
