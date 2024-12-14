@@ -61,12 +61,12 @@ const DocumentListElement: React.FC<Props> = ({ doc, onDocumentUpdate }) => {
           <span
             style={{
               fontWeight: 'bold',
-              color: getValidationStatusTextColor(doc.currentVersion?.status as Status)
+              color: getValidationStatusTextColor(doc.currentVersion?.status as Status),
             }}
           >
-            {doc.currentVersion ? doc.currentVersion.status : 'N/A'}
+            {doc.currentVersion && doc.currentVersion.expirationDate < new Date().toISOString() ? ' - Expired' : doc.currentVersion ? doc.currentVersion.status : 'N/A'}
           </span>
-        :
+          :
           'N/A'
       }</td>
 
@@ -120,27 +120,27 @@ const DocumentListElement: React.FC<Props> = ({ doc, onDocumentUpdate }) => {
         {
           doc.documentVersions.length > 0 &&
             <div>
-              <h4>Versions:</h4>
-              <ul>
-                {doc.documentVersions.map((version) => (
-                  <li key={version.id}>
-                    v{version.versionNumber} - {version.status}
-                    <button onClick={() => handleDeleteVersion(version.id)}>
-                      Delete
-                    </button>
-                    <select
-                      value={version.status}
-                      onChange={(e) =>
-                        handleUpdateStatus(version.id, e.target.value as Status)
-                      }
-                    >
-                      <option value={Status.Draft}>Draft</option>
-                      <option value={Status.Validated}>Validated</option>
-                      <option value={Status.Submitted}>Submitted</option>
-                    </select>
-                  </li>
-                ))}
-              </ul>
+                <h4>Versions:</h4>
+                <ul>
+                  {doc.documentVersions.map((version) => (
+                    <li key={version.id}>
+                      v{version.versionNumber} - {version.status}
+                      <button onClick={() => handleDeleteVersion(version.id)}>
+                        Delete
+                      </button>
+                      <select
+                        value={version.status}
+                        onChange={(e) =>
+                          handleUpdateStatus(version.id, e.target.value as Status)
+                        }
+                      >
+                        <option value={Status.Draft}>Draft</option>
+                        <option value={Status.Validated}>Validated</option>
+                        <option value={Status.Submitted}>Submitted</option>
+                      </select>
+                    </li>
+                  ))}
+                </ul>
             </div>
         }
       </td>

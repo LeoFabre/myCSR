@@ -1,4 +1,4 @@
-# Requirements 
+# Requirements (relevant only outside of docker, i.e. local dev)
 - postgresql is expected to be running on localhost:5432
 - '**csr_user**' user is expected to exist and have their password set to '**csr_password**'
 - if required to create a db before seeding, name it '**csr_db**' (prisma will create the database anyway if it doesn't exist)
@@ -18,8 +18,10 @@ To seed the database with the data from the csv files :
 To start the backend server :
 ``cd /path/to/this/repo/backend``  
 ``npm run dev``  
+Open the link in the console to see the frontend
 
 # Running inside of docker
-You can start the whole stack using docker-compose on the main repo directory :
+You can start the whole stack using docker-compose on the main repo directory :  
 ```cd /path/to/this/repo```  
-```docker-compose up```
+```docker-compose up```  
+Visit localhost:3000 to see the frontend

@@ -4,7 +4,6 @@ import { Requirement, Status } from '../types';
 import getValidationStatusTextColor from '../getValidationStatusTextColor';
 
 
-
 const RequirementsPage: React.FC = () => {
   const [requirements, setRequirements] = useState<Requirement[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -28,7 +27,7 @@ const RequirementsPage: React.FC = () => {
 
   const isCompliant = (requirement: Requirement): boolean => {
     return requirement.documents.every(
-      (doc) => doc.currentVersion && doc.currentVersion.status === Status.Validated,
+      (doc) => doc.currentVersion && doc.currentVersion.status === Status.Validated && doc.currentVersion.expirationDate > new Date().toISOString(),
     );
   };
 
@@ -58,8 +57,11 @@ const RequirementsPage: React.FC = () => {
                   <li key={doc.id}>
                     {doc.name}{' - '}
                     <span
-                      style={{ fontWeight: 'bold', color: getValidationStatusTextColor(doc.currentVersion?.status as Status) }}>
-                      {doc.currentVersion ? doc.currentVersion.status : 'N/A'}
+                      style={{
+                        fontWeight: 'bold',
+                        color: getValidationStatusTextColor(doc.currentVersion?.status as Status),
+                      }}>
+                      {doc.currentVersion && doc.currentVersion.expirationDate < new Date().toISOString() ? ' - Expired' : doc.currentVersion ? doc.currentVersion.status : 'N/A'}
                     </span>
                   </li>
 
