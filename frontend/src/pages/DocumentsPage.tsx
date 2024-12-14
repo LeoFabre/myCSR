@@ -16,7 +16,9 @@ const DocumentsPage: React.FC = () => {
   const fetchDocuments = async () => {
     try {
       const response = await api.get<Document[]>('/documents');
-      setDocuments(response.data);
+      // Trier les documents par ordre alphabétique en fonction du nom
+      const sortedDocuments = response.data.sort((a, b) => a.name.localeCompare(b.name));
+      setDocuments(sortedDocuments);
     } catch (err) {
       console.error('Error while retrieving documents.', err);
       setError('Error while retrieving documents.');
@@ -29,7 +31,7 @@ const DocumentsPage: React.FC = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
+    <div className="container">
       <h1>CSR Documents</h1>
       <table>
         <thead>
