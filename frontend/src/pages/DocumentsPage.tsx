@@ -1,5 +1,3 @@
-// src/pages/DocumentsPage.tsx
-
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { Document, DocumentVersion, Status } from '../types';
@@ -9,7 +7,6 @@ const DocumentsPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [newVersion, setNewVersion] = useState<Partial<DocumentVersion>>({
-    versionNumber: 1,
     status: Status.Draft,
   });
 
@@ -31,7 +28,6 @@ const DocumentsPage: React.FC = () => {
 
   const handleCreateVersion = async (documentId: string) => {
     if (
-      !newVersion.versionNumber ||
       !newVersion.filePath ||
       !newVersion.expirationDate ||
       !newVersion.status
@@ -46,7 +42,6 @@ const DocumentsPage: React.FC = () => {
         expirationDate: new Date(newVersion.expirationDate).toISOString(),
       });
       setNewVersion({
-        versionNumber: 1,
         status: Status.Draft,
       });
       fetchDocuments();
@@ -90,7 +85,6 @@ const DocumentsPage: React.FC = () => {
         <thead>
         <tr>
           <th>Document name</th>
-          <th>Requirement</th>
           <th>Current version</th>
           <th>Status</th>
           <th>Actions</th>
@@ -100,7 +94,6 @@ const DocumentsPage: React.FC = () => {
         {documents.map((doc) => (
           <tr key={doc.id}>
             <td>{doc.name}</td>
-            <td>{doc.requirementId}</td>
             <td>
               {doc.currentVersion
                 ? `v${doc.currentVersion.versionNumber}`
@@ -111,17 +104,6 @@ const DocumentsPage: React.FC = () => {
               {/* add new version form */}
               <div style={{ marginBottom: '1rem' }}>
                 <h4>Add new version</h4>
-                <input
-                  type="number"
-                  placeholder="Version"
-                  value={newVersion.versionNumber || ''}
-                  onChange={(e) =>
-                    setNewVersion({
-                      ...newVersion,
-                      versionNumber: parseInt(e.target.value, 10),
-                    })
-                  }
-                />
                 <input
                   type="text"
                   placeholder="File path"

@@ -11,7 +11,7 @@ const App: React.FC = () => {
       <nav>
         <ul>
           <li>
-            <Link to="/requirements">Exigences</Link>
+            <Link to="/requirements">Requirements</Link>
           </li>
           <li>
             <Link to="/documents">Documents</Link>

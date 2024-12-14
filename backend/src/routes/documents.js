@@ -74,12 +74,11 @@ router.delete('/:id', async (req, res) => {
 // POST /api/documents/:id/versions - create a new version for a document
 router.post('/:id/versions', async (req, res) => {
     const { id } = req.params;
-    const { versionNumber, filePath, expirationDate, status } = req.body;
+    const { filePath, expirationDate, status } = req.body;
     try {
         const documentVersion = await prisma.documentVersion.create({
             data: {
                 documentId: id,
-                versionNumber,
                 filePath,
                 expirationDate: new Date(expirationDate),
                 status,
