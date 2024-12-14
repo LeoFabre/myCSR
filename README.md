@@ -29,6 +29,9 @@ as static files to be quicker._
 - **DevOps:**
   - Dockerized backend and frontend
   - Docker Compose for easy local deployment
+  - Frontend deployed on Vercel (https://my-csr.vercel.app/)
+  - Backend deployed on fly.io (https://mycsr-backend.fly.dev/api)
+  - DB hosted on Supabase
 
 ## Project setup
 Assuming you have already cloned the repo:
