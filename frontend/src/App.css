@@ -47,9 +47,9 @@ nav ul li a:hover {
 
 .container {
     padding: 2rem;
-    width: 100%;       /* S'assure que le conteneur occupe toute la largeur disponible */
-    max-width: 100%;   /* Empêche toute restriction de largeur maximale */
-    box-sizing: border-box;  /* Inclut le padding dans la largeur totale */
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 /* Tables */

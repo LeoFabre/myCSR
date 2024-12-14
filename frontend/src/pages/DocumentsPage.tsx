@@ -1,4 +1,3 @@
-// DocumentsPage.tsx
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { Document } from '../types';
@@ -16,7 +15,6 @@ const DocumentsPage: React.FC = () => {
   const fetchDocuments = async () => {
     try {
       const response = await api.get<Document[]>('/documents');
-      // Trier les documents par ordre alphabétique en fonction du nom
       const sortedDocuments = response.data.sort((a, b) => a.name.localeCompare(b.name));
       setDocuments(sortedDocuments);
     } catch (err) {
