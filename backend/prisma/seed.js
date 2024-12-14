@@ -3,8 +3,26 @@ const fs = require("fs");
 const csv = require("csv-parser");
 const prisma = new PrismaClient();
 
+async function loadDocuments() {
+    const documents = {};
+
+    return new Promise((resolve, reject) => {
+        fs.createReadStream("./Documents.csv")
+            .pipe(csv())
+            .on("data", (row) => {
+                documents[row["Document"]] = {
+                    name: row["name"],
+                    description: row["description"],
+                };
+            })
+            .on("end", () => resolve(documents))
+            .on("error", reject);
+    });
+}
+
 async function seedRequirements() {
     const requirements = [];
+    const documents = await loadDocuments(); // Charger les documents avec leurs handles
 
     return new Promise((resolve, reject) => {
         fs.createReadStream("./Requirements.csv")
@@ -25,10 +43,20 @@ async function seedRequirements() {
                         },
                     });
 
-                    for (const docName of req.documents) {
-                        await prisma.document.create({
-                            data: {
-                                name: docName,
+                    for (const docHandle of req.documents) {
+                        const docData = documents[docHandle] || { name: "Unknown name", description: "Default description" };
+
+                        await prisma.document.upsert({
+                            where: { handle: docHandle },
+                            update: {
+                                Requirements: {
+                                    connect: { id: requirement.id },
+                                },
+                            },
+                            create: {
+                                handle: docHandle,
+                                name: docData.name,
+                                description: docData.description,
                                 Requirements: {
                                     connect: { id: requirement.id },
                                 },
@@ -50,17 +78,23 @@ async function seedDocuments() {
             .pipe(csv())
             .on("data", (row) => {
                 documents.push({
+                    handle: row["Document"],
                     name: row["name"],
                     description: row["description"],
-                    documentId: row["Document"],
                 });
             })
             .on("end", async () => {
                 for (const doc of documents) {
-                    await prisma.document.updateMany({
-                        where: { name: doc.documentId },
-                        data: {
+                    await prisma.document.upsert({
+                        where: { handle: doc.handle },
+                        update: {
                             name: doc.name,
+                            description: doc.description,
+                        },
+                        create: {
+                            handle: doc.handle,
+                            name: doc.name,
+                            description: doc.description,
                         },
                     });
                 }

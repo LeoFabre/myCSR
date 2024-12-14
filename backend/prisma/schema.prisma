@@ -18,7 +18,9 @@ model Requirement {
 
 model Document {
   id               String            @id @default(uuid())
-  name             String
+  handle           String            @unique
+  name             String            @unique
+  description      String
   documentVersions DocumentVersion[]
   currentVersionId String?           @unique
   currentVersion   DocumentVersion?  @relation("CurrentVersion", fields: [currentVersionId], references: [id])
@@ -31,7 +33,7 @@ model DocumentVersion {
   id             String    @id @default(uuid())
   document       Document  @relation(fields: [documentId], references: [id])
   documentId     String
-  versionNumber  Int       @default(autoincrement())
+  versionNumber  Int
   filePath       String
   expirationDate DateTime
   status         Status

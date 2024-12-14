@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { Requirement, Status } from '../types';
+import getValidationStatusTextColor from '../getValidationStatusTextColor';
+
+
 
 const RequirementsPage: React.FC = () => {
   const [requirements, setRequirements] = useState<Requirement[]>([]);
@@ -40,6 +43,7 @@ const RequirementsPage: React.FC = () => {
         <tr>
           <th>Name</th>
           <th>Description</th>
+          <th>Required Documents</th>
           <th>Status</th>
         </tr>
         </thead>
@@ -48,7 +52,23 @@ const RequirementsPage: React.FC = () => {
           <tr key={req.id}>
             <td>{req.name}</td>
             <td>{req.description}</td>
-            <td>{isCompliant(req) ? 'Compliant' : 'Non-compliant'}</td>
+            <td>
+              <ul>
+                {req.documents.map((doc) => (
+                  <li key={doc.id}>
+                    {doc.name}{' - '}
+                    <span
+                      style={{ fontWeight: 'bold', color: getValidationStatusTextColor(doc.currentVersion?.status as Status) }}>
+                      {doc.currentVersion ? doc.currentVersion.status : 'N/A'}
+                    </span>
+                  </li>
+
+                ))}
+              </ul>
+            </td>
+            <td style={{ fontWeight: 'bold', color: isCompliant(req) ? 'green' : 'orange' }}>
+              {isCompliant(req) ? 'Compliant' : 'Non-compliant'}
+            </td>
           </tr>
         ))}
         </tbody>

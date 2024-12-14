@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, NavLink } from 'react-router-dom';
 import RequirementsPage from './pages/RequirementsPage';
 import DocumentsPage from './pages/DocumentsPage';
 import './App.css';
@@ -11,10 +11,20 @@ const App: React.FC = () => {
       <nav>
         <ul>
           <li>
-            <Link to="/requirements">Requirements</Link>
+            <NavLink
+              to="/requirements"
+              className={({ isActive }) => (isActive || window.location.pathname === '/') ? 'active-link' : ''}
+            >
+              Requirements
+            </NavLink>
           </li>
           <li>
-            <Link to="/documents">Documents</Link>
+            <NavLink
+              to="/documents"
+              className={({ isActive }) => isActive ? 'active-link' : ''}
+            >
+              Documents
+            </NavLink>
           </li>
         </ul>
       </nav>

@@ -75,10 +75,19 @@ router.delete('/:id', async (req, res) => {
 router.post('/:id/versions', async (req, res) => {
     const { id } = req.params;
     const { filePath, expirationDate, status } = req.body;
+
     try {
+        const lastVersion = await prisma.documentVersion.findFirst({
+            where: { documentId: id },
+            orderBy: { versionNumber: 'desc' },
+        });
+
+        const newVersionNumber = lastVersion ? lastVersion.versionNumber + 1 : 1;
+
         const documentVersion = await prisma.documentVersion.create({
             data: {
                 documentId: id,
+                versionNumber: newVersionNumber,
                 filePath,
                 expirationDate: new Date(expirationDate),
                 status,
@@ -94,6 +103,7 @@ router.post('/:id/versions', async (req, res) => {
 
         res.status(201).json(documentVersion);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: 'myCSR : Error while creating document version.' });
     }
 });
