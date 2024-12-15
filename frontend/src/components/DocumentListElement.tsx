@@ -12,19 +12,23 @@ const DocumentListElement: React.FC<Props> = ({ doc, onDocumentUpdate }) => {
   const [newVersion, setNewVersion] = useState<Partial<DocumentVersion>>({
     status: Status.Draft,
   });
+  const [file, setFile] = useState<File | null>(null);
 
   const handleCreateVersion = async () => {
-    if (!newVersion.filePath || !newVersion.expirationDate || !newVersion.status) {
-      alert('Please fill in all fields to create a new version.');
+    if (!file || !newVersion.expirationDate || !newVersion.status) {
+      alert('Please fill in all fields and select a file to create a new version.');
       return;
     }
 
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('expirationDate', new Date(newVersion.expirationDate).toISOString());
+    formData.append('status', newVersion.status);
+
     try {
-      await api.post(`/documents/${doc.id}/versions`, {
-        ...newVersion,
-        expirationDate: new Date(newVersion.expirationDate).toISOString(),
-      });
+      await api.post(`/documents/${doc.id}/upload`, formData);
       setNewVersion({ status: Status.Draft });
+      setFile(null);
       onDocumentUpdate();
     } catch (err) {
       console.error('Error creating document version:', err);
@@ -52,38 +56,55 @@ const DocumentListElement: React.FC<Props> = ({ doc, onDocumentUpdate }) => {
     }
   };
 
+  const handleDownloadFile = async (versionId: string) => {
+    try {
+      const response = await api.get(`/documents/${doc.id}/download/${versionId}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data as BlobPart]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `document_${versionId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (err) {
+      console.error('Error downloading file:', err);
+      alert('Error downloading file. Please try again later.');
+    }
+  };
+
   return (
     <tr>
       <td>{doc.name}</td>
       <td>{doc.currentVersion ? `v${doc.currentVersion.versionNumber}` : 'N/A'}</td>
-      <td>{
-        doc.currentVersion ?
+      <td>
+        {doc.currentVersion ? (
           <span
             style={{
               fontWeight: 'bold',
               color: getValidationStatusTextColor(doc.currentVersion?.status as Status),
             }}
           >
-            {doc.currentVersion && doc.currentVersion.expirationDate < new Date().toISOString() ? ' - Expired' : doc.currentVersion ? doc.currentVersion.status : 'N/A'}
+            {doc.currentVersion &&
+            doc.currentVersion.expirationDate < new Date().toISOString()
+              ? ' - Expired'
+              : doc.currentVersion
+                ? doc.currentVersion.status
+                : 'N/A'}
           </span>
-          :
+        ) : (
           'N/A'
-      }</td>
+        )}
+      </td>
 
       <td>
         {/* Add new version form */}
         <div style={{ marginBottom: '1rem' }}>
           <h4>Add new version</h4>
           <input
-            type="text"
-            placeholder="File path"
-            value={newVersion.filePath || ''}
-            onChange={(e) =>
-              setNewVersion({
-                ...newVersion,
-                filePath: e.target.value,
-              })
-            }
+            type="file"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
           />
           <input
             type="date"
@@ -117,34 +138,36 @@ const DocumentListElement: React.FC<Props> = ({ doc, onDocumentUpdate }) => {
         </div>
 
         {/* Versions list */}
-        {
-          doc.documentVersions.length > 0 &&
-            <div>
-                <h4>Versions:</h4>
-                <ul>
-                  {doc.documentVersions.map((version) => (
-                    <li key={version.id}>
-                      v{version.versionNumber} - {version.status} <br />
-                      Expiration date: {version.expirationDate} <br />
-                      File path: {version.filePath} <br />
-                      <button onClick={() => handleDeleteVersion(version.id)}>
-                        Delete
-                      </button>
-                      <select
-                        value={version.status}
-                        onChange={(e) =>
-                          handleUpdateStatus(version.id, e.target.value as Status)
-                        }
-                      >
-                        <option value={Status.Draft}>Draft</option>
-                        <option value={Status.Validated}>Validated</option>
-                        <option value={Status.Submitted}>Submitted</option>
-                      </select>
-                    </li>
-                  ))}
-                </ul>
-            </div>
-        }
+        {doc.documentVersions.length > 0 && (
+          <div>
+            <h4>Versions:</h4>
+            <ul>
+              {doc.documentVersions.map((version) => (
+                <li key={version.id}>
+                  v{version.versionNumber} - {version.status} <br />
+                  Expiration date: {version.expirationDate} <br />
+                  File path: {version.filePath} <br />
+                  <button onClick={() => handleDeleteVersion(version.id)}>
+                    Delete
+                  </button>
+                  <button onClick={() => handleDownloadFile(version.id)}>
+                    Download File
+                  </button>
+                  <select
+                    value={version.status}
+                    onChange={(e) =>
+                      handleUpdateStatus(version.id, e.target.value as Status)
+                    }
+                  >
+                    <option value={Status.Draft}>Draft</option>
+                    <option value={Status.Validated}>Validated</option>
+                    <option value={Status.Submitted}>Submitted</option>
+                  </select>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </td>
     </tr>
   );
