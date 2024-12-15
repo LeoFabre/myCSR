@@ -124,7 +124,9 @@ const DocumentListElement: React.FC<Props> = ({ doc, onDocumentUpdate }) => {
                 <ul>
                   {doc.documentVersions.map((version) => (
                     <li key={version.id}>
-                      v{version.versionNumber} - {version.status}
+                      v{version.versionNumber} - {version.status} <br />
+                      Expiration date: {version.expirationDate} <br />
+                      File path: {version.filePath} <br />
                       <button onClick={() => handleDeleteVersion(version.id)}>
                         Delete
                       </button>

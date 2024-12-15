@@ -16,7 +16,8 @@ const RequirementsPage: React.FC = () => {
   const fetchRequirements = async () => {
     try {
       const response = await api.get<Requirement[]>('/requirements');
-      setRequirements(response.data);
+      const sortedRequirements = response.data.sort((a, b) => a.name.localeCompare(b.name));
+      setRequirements(sortedRequirements);
     } catch (err) {
       console.error('Error fetching requirements:', err);
       setError('Error fetching requirements. Please try again later.');
