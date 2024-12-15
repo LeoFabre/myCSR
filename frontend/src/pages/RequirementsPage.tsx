@@ -28,7 +28,7 @@ const RequirementsPage: React.FC = () => {
 
   const isCompliant = (requirement: Requirement): boolean => {
     return requirement.documents.every(
-      (doc) => doc.currentVersion && doc.currentVersion.status === Status.Validated && doc.currentVersion.expirationDate > new Date().toISOString(),
+      (doc) => doc.currentVersion && doc.currentVersion.status === Status.Submitted && doc.currentVersion.expirationDate > new Date().toISOString()
     );
   };
 

@@ -3,9 +3,10 @@ import { Status } from './types';
 const getValidationStatusTextColor = (status: Status) => {
   switch (status) {
     case Status.Draft:
-    case Status.Submitted:
-      return 'orange';
+      return 'grey';
     case Status.Validated:
+      return 'orange';
+    case Status.Submitted:
       return 'green';
     default:
       return 'red';
