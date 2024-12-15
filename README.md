@@ -67,7 +67,7 @@ Documents must be validated (typically by the CSR manager of the company) before
 
 1. **Requirements**
   - `id` (Primary Key, UUID as TEXT)
-  - `name` (TEXT)
+  - `name` (TEXT, Unique)
   - `description` (TEXT)
   - `created_at` (TIMESTAMP)
   - `updated_at` (TIMESTAMP)
