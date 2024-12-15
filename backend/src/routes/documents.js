@@ -49,6 +49,13 @@ router.post('/:id/upload', upload.single('file'), async (req, res) => {
             },
         });
 
+        await prisma.document.update({
+            where: { id },
+            data: {
+                currentVersionId: documentVersion.id,
+            },
+        });
+
         res.status(201).json(documentVersion);
     } catch (error) {
         console.error(error);
