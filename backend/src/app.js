@@ -4,8 +4,9 @@ const requirementsRoutes = require('./routes/requirements');
 const documentsRoutes = require('./routes/documents');
 const { seedDB } = require("../prisma/seed");
 
-//seed the database
-await seedDB();
+(async () => {
+  await seedDB();
+})();
 
 const app = express();
 
