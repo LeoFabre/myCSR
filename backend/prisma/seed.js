@@ -36,8 +36,12 @@ async function seedRequirements() {
             })
             .on("end", async () => {
                 for (const req of requirements) {
-                    const requirement = await prisma.requirement.create({
-                        data: {
+                    const requirement = await prisma.requirement.upsert({
+                        where: { name: req.name },
+                        update: {
+                            description: req.description,
+                        },
+                        create: {
                             name: req.name,
                             description: req.description,
                         },
@@ -49,6 +53,8 @@ async function seedRequirements() {
                         await prisma.document.upsert({
                             where: { handle: docHandle },
                             update: {
+                                name: docData.name,
+                                description: docData.description,
                                 Requirements: {
                                     connect: { id: requirement.id },
                                 },
